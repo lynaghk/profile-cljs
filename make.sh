@@ -9,4 +9,4 @@ rm -rf out
 mkdir -p out
 java -server -cp $CLJSC_CP clojure.main compile.clj
 
-phantomjs src/run.js
+#phantomjs src/run.js

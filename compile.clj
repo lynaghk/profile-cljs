@@ -1,5 +1,12 @@
 (require '[cljs.closure :as closure])
 
-(closure/build "src/cljs/test1.cljs" {:optimizations :simple
-                                      :output-dir "out/"
-                                      :output-to "out/compiled.js"})
+#_(closure/build "src/cljs/cassowary.cljs" {:optimizations :advanced
+                                            :output-dir "out/advanced/"
+                                            :output-to "out/advanced/compiled.js"
+                                            :libs [""]})
+
+(closure/build "src/cljs/cassowary.cljs" {:optimizations :advanced
+                                          :output-dir "out/"
+                                          :output-to "out/compiled.js"
+                                          :libs ["cassowaryjs"]})
+
