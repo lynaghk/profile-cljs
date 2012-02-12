@@ -1,13 +1,30 @@
-(ns cassowary
-  (:refer-clojure :exclude [+ - =])
-  (:use-macros [util :only [profile p]])
-  (:use [cassowary.core :only [+ - = cvar value constrain! stay! simplex-solver]]))
+(ns cassowary-demo
+  (:refer-clojure :exclude [+ - * =])
+  (:use [cassowary.core :only [+ - = * cvar value constrain! unconstrain! simplex-solver]]))
+
+(defn *print-fn* [x] (.log js/console x))
+
+(let [solver  (simplex-solver)
+      vars    (for [_ (range 5)] (cvar 0))]
+
+  ;;Relation between consecutive pairs of variables
+  (doseq [[a b] (partition 2 1 vars)]
+    (constrain! solver (= b (* 2 a))))
+  
+  (let [c1 (= 1 (first vars))
+        c2 (= -5 (first vars))]
+    
+    (constrain! solver c1)
+    (print (pr-str (map value vars))) ;=> (1 2 4 8 16)
+    
+    (unconstrain! solver c1)
+    (constrain! solver c2)
+    (print (pr-str (map value vars))))) ;=> (-5 -10 -20 -40 -80)
 
 
-(defn *print-fn* [x]
-  (.log js/console x))
 
-(let [height 200, width 800, max-radius 40
+
+#_(let [height 200, width 800, max-radius 40
       solver  (simplex-solver)
       spacing (cvar 0) ;;The spacing between circles (to be solved for)
       circles (repeatedly 10 #(hash-map :r  (cvar (* max-radius (rand)))
