@@ -5,10 +5,9 @@
                                             :output-to "out/advanced/compiled.js"
                                             :libs [""]})
 
-(closure/build "src/cljs/cassowary.cljs" {:optimizations :simple
-                                          :pretty-print true
+(closure/build "src/cljs/cassowary.cljs" {:optimizations :advanced
                                           :output-dir "out/"
                                           :output-to "out/compiled.js"
-                                          :libs [""]})
+                                          :libs ["cassowaryjs"]})
 
 

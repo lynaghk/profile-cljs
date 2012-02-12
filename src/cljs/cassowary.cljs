@@ -1,12 +1,11 @@
 (ns cassowary
   (:refer-clojure :exclude [+ - =])
   (:use-macros [util :only [profile p]])
-  (:use [cassowary.core :only [+ - = cvar constrain! stay! simplex-solver]]))
+  (:use [cassowary.core :only [+ - = cvar value constrain! stay! simplex-solver]]))
 
 
 (defn *print-fn* [x]
   (.log js/console x))
-
 
 (let [height 200, width 800, max-radius 40
       solver  (simplex-solver)
@@ -36,7 +35,7 @@
                                    (:cx (last circles))
                                    (:r (last circles)))))
 
-  (p (.value (:cx (first circles))))
+  (p (value (:cx (first circles))))
 
   )
 
