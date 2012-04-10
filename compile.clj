@@ -4,3 +4,4 @@
                                     :pretty-print true
                                     :output-dir "out/"
                                     :output-to "out/compiled.js"})
+
