@@ -10,5 +10,8 @@
                               :compiler {:output-to "out/main.js"
                                          :optimizations :simple
                                          :pretty-print true}}}}
-  :source-paths ["src/clj" "src/cljs"]
+  :source-paths ["src/clj" "src/cljs"
+                 ;;If you want to reference local ClojureScript checkout instead of whatever lein cljsbuild is using
+                 "vendor/clojurescript/src/clj" "vendor/clojurescript/src/cljs"]
+  
   :min-lein-version "2.0.0")

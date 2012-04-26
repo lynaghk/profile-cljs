@@ -1,20 +1,62 @@
 (ns seq-test.test
-  (:use-macros [util.macros :only [profile p pp]]))
+  (:use-macros [util.macros :only [profile p pp]]
+               [iterate :only [iter]]))
 
-(profile "count to 100,000"
-         (doall (range 100000)))
+(extend-type array
+  ICollection
+  (-conj [a x]
+    (.push a x)
+    a))
 
-(profile "100,000, counting"
-         (doseq [i (range 100000)]))
+(let [n 100000
+      l (range n)]
+  (profile "counting first time"
+           (doseq [i l]))
+  
+  (profile "counting second time"
+           (doseq [i l]))
+  
+  (profile "count using loop/recur via iter rather than doseq"
+           (iter {for i in l}))
 
-(profile "100,000 maps"
-         (doseq [i (map #(hash-map :a 1 :b 2 :i %) (range 100000))]))
+  
+  
+  (let [a (profile "allocating js array" (js* "new Array(~{n})"))]
+    (profile "doseq over js-array"
+             (doseq [i a]))
+    (profile "foreach over js-array"
+             (.forEach a #())))
 
-(profile "100,000 maps, destructured"
-         (doseq [{:keys [a b i]} (map #(hash-map :a 1 :b 2 :i %) (range 100000))]))
 
-(profile "100,000 vectors"
-         (doseq [i (map #(vector 1 %) (range 100000))]))
+  (let [a (profile "realized seq into js array" (into (array) l))]
+    (profile "doseq over js-array"
+             (doseq [i a]))
+    (profile "foreach over js-array"
+             (.forEach a #())))
 
-(profile "100,000 vectors, destructured"
-         (doseq [[i j] (map #(vector 1 %) (range 100000))]))
+  ;; (profile "maps"
+  ;;          (doseq [i (map #(hash-map :a 1 :b 2 :i %) l)]))
+
+  ;; (profile "maps, destructured"
+  ;;          (doseq [{:keys [a b i]} (map #(hash-map :a 1 :b 2 :i %) l)]))
+
+  ;; (profile "vectors"
+  ;;          (doseq [i (map #(vector 1 %) l)]))
+
+  ;; (profile "vectors, destructured"
+  ;;          (doseq [[i j] (map #(vector 1 %) l)]))
+
+
+
+  )
+
+
+
+
+
+
+
+
+
+
+
