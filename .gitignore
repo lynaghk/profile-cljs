@@ -2,3 +2,4 @@
 lib/
 out/
 pom.xml
+.lein*
