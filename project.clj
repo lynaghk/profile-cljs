@@ -7,7 +7,7 @@
   
   :plugins [[lein-cljsbuild "0.1.8"]]
   :cljsbuild {:builds {:test {:source-path "src/cljs/seq_test"
-                              :compiler {:output-to "out/main.js"
+                              :compiler {:output-to "public/main.js"
                                          :optimizations :simple
                                          :pretty-print true}}}}
   :source-paths ["src/clj" "src/cljs"
