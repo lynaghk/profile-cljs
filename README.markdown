@@ -9,21 +9,20 @@
 
 Wherein I write a lot of little tests to examine ClojureScript performance, DOM manipulation hacks, &c.
 
-To play along at home, you'll need to install PhantomJS.
-OS X users:
+Change the cljsbuild configuration in `project.clj` to build the test that you're interested in, then run
 
-    brew update && brew install phantomjs
+    lein cljsbuild once
 
-Everyone else, you're on your own; see http://www.phantomjs.org/
+to compile the ClojureScript and open
 
-Then the usual:
+    public/run.html
 
-    git submodule update
-    cd vendor/clojurescript && script/bootstrap
-    lein deps
+in your favorite browser.
 
-Finally, run 
 
-    ./make.sh
+Not afraid of Ruby?
 
-to compile the ClojureScript and execute with PhantomJS.
+    bundle install
+    bundle exec guard
+
+to use the livereload browser plugin.

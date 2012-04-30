@@ -1,3 +1,3 @@
 guard 'livereload', :apply_js_live => false do
-  watch(%r{out/.+\.(css|js|html)})
+  watch(%r{public/.+\.(css|js|html)})
 end
