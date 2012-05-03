@@ -13,6 +13,13 @@
 
 (defmacro profile [descr & body]
   `(let [start# (.getTime (js/Date.))
-         ret# (do ~@body)]
-     (p (str ~descr ": " (- (.getTime (js/Date.)) start#) " msecs"))
+         ret# (do ~@body)
+         dt# (- (.getTime (js/Date.)) start#)]
+     
+     #_(p (str ~descr ": " dt# " msecs"))
+     
+     (js/add_timing ~descr
+                    ~(pr-str body)
+                    "cljs"
+                    dt#)
      ret#))
