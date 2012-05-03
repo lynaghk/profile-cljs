@@ -9,7 +9,7 @@ window.get_timings = ->
   if ls?
     JSON.parse(ls)
   else
-    {}
+    []
 
 timings = get_timings()
 
@@ -17,18 +17,19 @@ window.save_timings = ->
   localStorage[LS_KEY] = JSON.stringify timings
 
 #add timing to DB; called by both JS and CLJS code
-window.add_timing = (name, prn_src, type, dt) ->
-  timings[name] or= {}
-  timings[name][type] or= {}
-  timings[name][type]["ts"] or= []
-
-  timings[name][type]["src"] = prn_src
-  timings[name][type]["ts"].push dt
+window.add_timing = (timing) ->
+  timings.push timing
 
 #profiling fn for JS
-window.profile = (name, fn) ->
+window.profile = (opts, fn) ->
   start = new Date()
   fn()
-  dt = new Date() - start
+  if typeof opts == "string"
+    opts =
+      group: opts
 
-  add_timing name, fn.toString(), "js", dt
+  opts["dt"] = new Date() - start
+  opts["lang"] = "js"
+  opts["src"] = fn.toString()
+  add_timing opts
+

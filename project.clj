@@ -1,5 +1,5 @@
 (defproject profile-cljs "0.0.1-SNAPSHOT"
-  :description "Look at ClojureScript speed with respect to DOM manipulation."
+  :description "Compare ClojureScript & JS performance"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/core.match "0.2.0-alpha9"]
 
@@ -8,14 +8,15 @@
 
   :plugins [[lein-cljsbuild "0.1.8"]]
   
-  :cljsbuild {:builds {:simple {:source-path "src/cljs/c2_test"
+  :cljsbuild {:builds {:simple {:source-path "src/cljs/microbenchmarks"
                                 :compiler {:output-to "public/simple.js"
-                                           :optimizations :simple
-                                           :pretty-print true}}
-                       :advanced {:source-path "src/cljs/c2_test"
-                                  :compiler {:output-to "public/advanced.js"
-                                             :optimizations :advanced
-                                             :pretty-print true}}}}
+                                           :optimizations :simple}}
+                       ;; :advanced {:source-path "src/cljs/microbenchmarks"
+                       ;;            :compiler {:output-to "public/advanced.js"
+                       ;;                       :optimizations :advanced}}
+                       :viewer {:source-path "src/cljs/viewer"
+                                :compiler {:output-to "public/viewer.js"
+                                             :optimizations :simple}}}}
   :source-paths ["src/clj" "src/cljs"
                  ;;If you want to reference local ClojureScript checkout instead of whatever lein cljsbuild is using
                  "vendor/clojurescript/src/clj" "vendor/clojurescript/src/cljs"]
