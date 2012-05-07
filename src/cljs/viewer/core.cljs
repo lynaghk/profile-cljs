@@ -8,7 +8,7 @@
 (def timings (js->clj (js/get_timings)
                       :keywordize-keys true))
 
-(unify! $res (pp (group-by :group timings))
+(unify! $res (group-by :group timings)
         (fn [[group timings]]
           [:div.group
            [:h3 group]
