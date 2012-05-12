@@ -24,6 +24,10 @@
                                (callback e)))))
 
 (defn draw! []
+  
+  ;;C2 gets tripped up by the code highligher changing the markup, so for now just clear everything on redraws.
+  (set! (.-innerHTML $res) "")
+  
   (unify! $res (grouped-timings)
           (fn [[group timings]]
             [:div.group
@@ -35,7 +39,9 @@
                        [:td.time (pr-str (map :dt timings))]
                        [:td.code [:pre [:code src]]]])
                     (group-by :src timings))]]])
-          :key-fn (fn [[group timings]] group)))
+          :key-fn (fn [[group timings]] group))
+
+  (js/hljs.highlightBlock $res))
 
 
 ;;Buton handlers
@@ -50,5 +56,3 @@
 
 ;;initial draw
 (draw!)
-
-(js/hljs.initHighlightingOnLoad)
