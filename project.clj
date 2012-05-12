@@ -11,9 +11,9 @@
   :cljsbuild {:builds {:simple {:source-path "src/cljs/microbenchmarks"
                                 :compiler {:output-to "public/simple.js"
                                            :optimizations :simple}}
-                       ;; :advanced {:source-path "src/cljs/microbenchmarks"
-                       ;;            :compiler {:output-to "public/advanced.js"
-                       ;;                       :optimizations :advanced}}
+                       :advanced {:source-path "src/cljs/microbenchmarks"
+                                  :compiler {:output-to "public/advanced.js"
+                                             :optimizations :advanced}}
                        :viewer {:source-path "src/cljs/viewer"
                                 :compiler {:output-to "public/viewer.js"
                                              :optimizations :simple}}}}

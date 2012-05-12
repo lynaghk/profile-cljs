@@ -25,25 +25,29 @@
                                (callback e)))))
 
 (defn draw! []
-  
+
   ;;C2 gets tripped up by the code highligher changing the markup, so for now just clear everything on redraws.
   (set! (.-innerHTML $res) "")
-  
+
   (unify! $res (grouped-timings)
           (fn [[group timings]]
             [:div.group
              [:h3 group]
              [:table
               [:tbody
-               (map (fn [[src timings]]
-                      [:tr
-                       ;;[:td.time (pr-str (map :dt timings))]
-                       [:td.time (median (map :dt timings))]
-                       [:td.code [:pre [:code src]]]])
-                    (group-by :src timings))]]])
+               (for [[src ts] (group-by :src timings)]
+                 [:tr
+                  
+                  [:td.time
+                   (for [[mode ts] (group-by :mode ts)]
+                     [:span {:class (or mode "js")} (median (map :dt ts))])]
+
+                  [:td.code [:pre [:code src]]]])]]])
+          
           :key-fn (fn [[group timings]] group))
 
-  (js/hljs.highlightBlock $res))
+  (doseq [$el (dom/select-all "code")]
+    (js/hljs.highlightBlock $el)))
 
 
 ;;Buton handlers
@@ -58,3 +62,15 @@
 
 ;;initial draw
 (draw!)
+
+
+[:div.group [:h3 "vectors"]
+ [:table [:tbody
+
+          [:tr
+           [:td.time
+            [:div {:class "simple"} 186]
+            [:div {:class "advanced"} 48]]
+           [:td.code [:pre [:code "(first v)"]]]]
+          [:tr [:td.time ([:div {:class "simple"} 19] [:div {:class "advanced"} 7])] [:td.code [:pre [:code "(satisfies? ISeq v)"]]]]
+          [:tr [:td.time ([:div {:class "simple"} 183] [:div {:class "advanced"} 57])] [:td.code [:pre [:code "(rest v)"]]]] [:tr [:td.time ([:div {:class "simple"} 207] [:div {:class "advanced"} 68])] [:td.code [:pre [:code "(next v)"]]]]]]]

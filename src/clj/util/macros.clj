@@ -23,5 +23,7 @@
 
        (js/add_timing (apply ~'js-obj
                              (flatten (map (fn [[k# v#]] [(name k#) v#])
-                                           (assoc ~timing :dt dt#)))))
+                                           (assoc ~timing
+                                             :dt dt#
+                                             :mode js/MODE)))))
        ret#)))
