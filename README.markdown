@@ -16,16 +16,14 @@ to compile CoffeeScript infrastructure, then
 
     lein cljsbuild once
 
-to compile the ClojureScript and open
+to compile the ClojureScript.
 
-    public/run.html
-
-in your favorite browser to run the benchmarks; refresh a few times for "statistical power".
 Now open up
 
     public/index.html
 
-to see the timing results.
+in your favorite browser and press the run button a few times.
+
 You'll need to serve `public` via a webserver or open up Chrome (on OS X) as
 
     /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\

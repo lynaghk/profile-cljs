@@ -16,6 +16,9 @@ timings = get_timings()
 window.save_timings = ->
   localStorage[LS_KEY] = JSON.stringify timings
 
+window.reset_timings = ->
+  localStorage.removeItem LS_KEY
+
 #add timing to DB; called by both JS and CLJS code
 window.add_timing = (timing) ->
   timings.push timing
