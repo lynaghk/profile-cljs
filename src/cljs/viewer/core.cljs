@@ -1,6 +1,7 @@
 (ns viewer.core
   (:use-macros [c2.util :only [p pp]])
-  (:use [c2.core :only [unify!]])
+  (:use [c2.core :only [unify!]]
+        [c2.maths :only [median]])
   (:require [c2.dom :as dom]
             [c2.event :as event]))
 
@@ -36,7 +37,8 @@
               [:tbody
                (map (fn [[src timings]]
                       [:tr
-                       [:td.time (pr-str (map :dt timings))]
+                       ;;[:td.time (pr-str (map :dt timings))]
+                       [:td.time (median (map :dt timings))]
                        [:td.code [:pre [:code src]]]])
                     (group-by :src timings))]]])
           :key-fn (fn [[group timings]] group))
