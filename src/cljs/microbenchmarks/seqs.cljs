@@ -18,7 +18,12 @@
   (profile {:group "vectors" :n 100000} (satisfies? ISeq v))
   (profile {:group "vectors" :n 100000} (first v))
   (profile {:group "vectors" :n 100000} (rest v))
-  (profile {:group "vectors" :n 100000} (next v)))
+  (profile {:group "vectors" :n 100000} (next v))
+  
+  (profile {:group "destructuring" :n 10000}
+           (let [[a b c] v]))
+  (profile {:group "destructuring" :n 10000}
+           (let [[a & rest] v])))
 
 ;; Regular expression that parses a CSS-style id and class from a tag name. From Weavejester's Hiccup.
 (def re-tag #"([^\s\.#]+)(?:#([^\s\.#]+))?(?:\.([^\s#]+))?")
