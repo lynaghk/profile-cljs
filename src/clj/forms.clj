@@ -9,7 +9,7 @@
 
 ;;Counter used to give a unique ID to each form
 (def !n (atom 0))
-(defn nth-form [] (swap! !n inc))
+(defn nth-form [] (str "form-" (swap! !n inc)))
 
 (defmacro wrap-form
   "Evaluates expr and returns result.
@@ -37,7 +37,7 @@
          [([(:or 'ns 'def 'defn 'defmacro
                  :use :require :use-macros ;;need to figure out how to get postwalk to ignore entire branches...
                  )  & _] :seq)] false
-         :else (list? form)))
+                    :else (list? form)))
 
 (defn munge [f]
   (walk/postwalk (fn [x]
@@ -45,36 +45,45 @@
                      `(~'wrap-form ~x ~(nth-form))
                      x))
                  (read-file (LineNumberingPushbackReader. (reader f)))))
-(defn munge-file [f]
-  (reset! !n 0)
-  (let [tmp-f "src/cljs/wrapped/test.cljs"]
-    (spit tmp-f (join "\n" (munge f)))
-    tmp-f))
+
+(defn munge-file!
+  "Wraps all forms in f, returning str of forms"
+  ([f]
+     (reset! !n 0)
+     (join "\n" (munge f))))
 
 (defn profile! [f]
   (let [sw (java.io.StringWriter.)]
     (binding [*out* sw]
-    (load-file (munge-file f)))
+      (load-file (munge-file! f)))
     (map read-string (split (str sw) #"\n"))))
 
 (defn render-form [x]
-  (reset! !n 0)
   (cond
-   (seq? x)      [:span {:id (when (annotate? x) (str "form-" (nth-form)))}
-                  "(" (interpose "&nbsp;" (map r x)) ")"]
+   (seq? x)      [:span {:id (when (annotate? x) (nth-form))}
+                  "(" (interpose "&nbsp;" (map render-form x)) ")"]
    :else (hutil/escape-html (str x))))
+
+(defn file->html [f]
+  (reset! !n 0)
+  (html
+   (map (fn [x] [:p (render-form x)])
+        (read-file (LineNumberingPushbackReader. (reader f))))))
 
 
 (comment
   (set! *print-meta* false)
-  (def f "test.cljs")
-
   #_(profile! f)
-  (munge-file f)
-  (spit "grr.html"
-        (html
-         (map (fn [x] [:p (r x)])
-              (read-file (LineNumberingPushbackReader. (reader f))))))
+
+  (def f "test.cljs")
+  (let [out (munge-file f)
+        out-html (file->html f)]
+    
+    (spit "src/cljs/wrapped/test.cljs"
+          (str out "\n\n"
+               (prn-str `(core/render ~out-html)))))
+  
+
 
 
 
