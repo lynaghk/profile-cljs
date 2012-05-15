@@ -4,3 +4,4 @@ out/
 pom.xml
 .lein*
 public/*
+src/cljs/wrapped/test.cljs

@@ -11,7 +11,7 @@
 (def !n (atom 0))
 (defn nth-form [] (swap! !n inc))
 
-(defmacro wrap-time
+(defmacro wrap-form
   "Evaluates expr and returns result.
    Emits the time it took with metadata about the form itself to the output stream that is the current value of *gprof-reporter*."
   [form name]
@@ -34,45 +34,49 @@
 
 (defn annotate? [form]
   (match [form]
-         [([(:or 'ns 'def 'defn 'defmacro) & _] :seq)] false
+         [([(:or 'ns 'def 'defn 'defmacro
+                 :use :require :use-macros ;;need to figure out how to get postwalk to ignore entire branches...
+                 )  & _] :seq)] false
          :else (list? form)))
 
 (defn munge [f]
   (walk/postwalk (fn [x]
                    (if (annotate? x)
-                     `(wrap-time ~x ~(nth-form))
+                     `(~'wrap-form ~x ~(nth-form))
                      x))
                  (read-file (LineNumberingPushbackReader. (reader f)))))
+(defn munge-file [f]
+  (reset! !n 0)
+  (let [tmp-f "src/cljs/wrapped/test.cljs"]
+    (spit tmp-f (join "\n" (munge f)))
+    tmp-f))
 
 (defn profile! [f]
-  (let [tmp-f "out.cljs"
-        sw (java.io.StringWriter.)]
-    (spit tmp-f (join "\n" (munge f)))
+  (let [sw (java.io.StringWriter.)]
     (binding [*out* sw]
-      (load-file tmp-f))
+    (load-file (munge-file f)))
     (map read-string (split (str sw) #"\n"))))
 
+(defn render-form [x]
+  (reset! !n 0)
+  (cond
+   (seq? x)      [:span {:id (when (annotate? x) (str "form-" (nth-form)))}
+                  "(" (interpose "&nbsp;" (map r x)) ")"]
+   :else (hutil/escape-html (str x))))
 
-(defn escape-html [s]
-  (hutil/escape-html s))
 
 (comment
   (set! *print-meta* false)
   (def f "test.cljs")
-  (reset! !n 0)
-  (profile! f)
-  (reset! !n 0)
 
-  (defn r [x]
-    (cond
-     (seq? x)      [:span {:style (when (annotate? x) "color: blue;")}
-                    "(" (interpose "&nbsp;" (map r x)) ")"]
-     :else (escape-html (str x))))
-
+  #_(profile! f)
+  (munge-file f)
   (spit "grr.html"
         (html
          (map (fn [x] [:p (r x)])
               (read-file (LineNumberingPushbackReader. (reader f))))))
+
+
 
   ;;core match bug?
   ;;removing the first clause lets second clause match, but when the first is left in we get nil

@@ -7,7 +7,7 @@
                  [com.keminglabs/vomnibus "0.3.0"]]
 
   :plugins [[lein-cljsbuild "0.1.9"]]
-  
+
   :cljsbuild {:builds {:simple {:source-path "src/cljs/microbenchmarks"
                                 :compiler {:output-to "public/simple.js"
                                            :optimizations :simple}}
@@ -16,7 +16,10 @@
                                              :optimizations :advanced}}
                        :viewer {:source-path "src/cljs/viewer"
                                 :compiler {:output-to "public/viewer.js"
-                                             :optimizations :simple}}}}
+                                           :optimizations :simple}}
+                       :wrapped {:source-path "src/cljs/wrapped"
+                                 :compiler {:output-to "public/wrapped.js"
+                                            :optimizations :simple}}}}
   :source-paths ["src/clj" "src/cljs"
                  ;;If you want to reference local ClojureScript checkout instead of whatever lein cljsbuild is using
                  ;;"vendor/clojurescript/src/clj" "vendor/clojurescript/src/cljs"
