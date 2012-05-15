@@ -20,4 +20,9 @@
   (profile {:group "vectors" :n 100000} (rest v))
   (profile {:group "vectors" :n 100000} (next v)))
 
+;; Regular expression that parses a CSS-style id and class from a tag name. From Weavejester's Hiccup.
+(def re-tag #"([^\s\.#]+)(?:#([^\s\.#]+))?(?:\.([^\s#]+))?")
+(profile {:group "regex" :n 100000} (re-matches re-tag "div#with-id.and-class"))
+(profile {:group "regex" :n 100000} (.match "div#with-id.and-class" re-tag))
+
 
