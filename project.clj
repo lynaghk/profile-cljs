@@ -2,7 +2,7 @@
   :description "Compare ClojureScript & JS performance"
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/core.match "0.2.0-alpha9"]
-
+                 [hiccup "1.0.0"]
                  [com.keminglabs/c2 "0.1.1-SNAPSHOT"]
                  [com.keminglabs/vomnibus "0.3.0"]]
 
