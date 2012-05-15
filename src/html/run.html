@@ -1,19 +1,26 @@
-<head>
-  <script src="scaffold.js"></script>  
-  <!-- Scripts to profile here -->
+<html>
+  <head>
+  </head>
+  <body>
+    <div id="test"></div>
 
-  <script src="microbenchmarks/seqs.js"></script>
-  <script src="microbenchmarks/field_access.js"></script>
+    <script src="scaffold.js"></script>
+    <!-- Scripts to profile here -->
 
-  <script>window.MODE = "simple";</script>
-  <script src="simple.js"></script>
+    <script src="microbenchmarks/seqs.js"></script>
+    <script src="microbenchmarks/field_access.js"></script>
 
-  <script>window.MODE = "advanced";</script>
-  <script src="advanced.js"></script>
-  
-  <script>
-    save_timings();
-  </script>
+    <script>window.MODE = "simple";</script>
+    <script src="simple.js"></script>
 
-</head>
-<body></body>
+    <script>window.MODE = "advanced";</script>
+    <script src="advanced.js"></script>
+
+    <script>
+      save_timings();
+    </script>
+
+
+
+  </body>
+</html>
