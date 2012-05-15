@@ -29,12 +29,4 @@
        ret#)))
 
 
-(defmacro wrap-form
-  "Evaluates expr and returns result.
-   Writes the time it took with form name to global !timing atom, assumed to exist"
-  [form name]
-  `(let [start# (.getTime (js/Date.))
-         res# ~form]
-     (swap! ~'wrapped.core/!timings #(conj % {:name ~name
-                                             :time (- (.getTime (js/Date.)) start#)}))
-     res#))
+

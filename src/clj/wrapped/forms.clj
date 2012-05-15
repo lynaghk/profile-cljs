@@ -1,4 +1,4 @@
-(ns forms
+(ns wrapped.forms
   (:use [clojure.java.io :only [reader]]
         [clojure.core.match :only [match]]
         [clojure.string :only [join split]]
@@ -11,7 +11,7 @@
 (def !n (atom 0))
 (defn nth-form [] (str "form-" (swap! !n inc)))
 
-(defmacro wrap-form
+#_(defmacro wrap-form
   "Evaluates expr and returns result.
    Emits the time it took with metadata about the form itself to the output stream that is the current value of *gprof-reporter*."
   [form name]
@@ -19,6 +19,16 @@
          res# ~form]
      (prn {:name ~name
            :time (* 1e-6 (- (. java.lang.System nanoTime) start#))})
+     res#))
+
+(defmacro wrap-form
+  "Evaluates expr and returns result.
+   Writes the time it took with form name to global !timing atom, assumed to exist"
+  [form name]
+  `(let [start# (.getTime (js/Date.))
+         res# ~form]
+     (swap! ~'wrapped.core/!timings #(conj % {:name ~name
+                                             :time (- (.getTime (js/Date.)) start#)}))
      res#))
 
 ;;taken from kibit
@@ -39,24 +49,22 @@
                  )  & _] :seq)] false
                     :else (list? form)))
 
-(defn munge [f]
+(defn munge [forms]
   (walk/postwalk (fn [x]
                    (if (annotate? x)
-                     `(~'wrap-form ~x ~(nth-form))
+                     (wrap-form x (nth-form)) 
                      x))
-                 (read-file (LineNumberingPushbackReader. (reader f)))))
+                 forms
+                 #_(map walk/macroexpand-all forms)))
+
 
 (defn munge-file!
   "Wraps all forms in f, returning str of forms"
   ([f]
      (reset! !n 0)
-     (join "\n" (munge f))))
+     (join "\n" (munge (read-file (LineNumberingPushbackReader. (reader f)))))))
 
-(defn profile! [f]
-  (let [sw (java.io.StringWriter.)]
-    (binding [*out* sw]
-      (load-file (munge-file! f)))
-    (map read-string (split (str sw) #"\n"))))
+
 
 (defn render-form [x]
   (cond
@@ -64,27 +72,49 @@
                   "(" (interpose "&nbsp;" (map render-form x)) ")"]
    :else (hutil/escape-html (str x))))
 
-(defn file->html [f]
+(defn forms->html [forms]
   (reset! !n 0)
   (html
    (map (fn [x] [:p (render-form x)])
-        (read-file (LineNumberingPushbackReader. (reader f))))))
+        forms)))
+
+(defn file->html [f]
+  (forms->html (read-file (LineNumberingPushbackReader. (reader f)))))
+
+
+
+(defn profile-cljs! [f]
+  (let [out (munge-file! f)
+        out-html (file->html f)]
+
+    (spit "src/cljs/wrapped/test.cljs"
+          (str out "\n\n"
+               (prn-str `(core/render ~out-html))))))
+
+
+(defmacro profile-forms[& forms]
+  `(do
+     ~@(munge forms)
+     (core/render ~(forms->html forms))))
+
+
+
 
 
 (comment
   (set! *print-meta* false)
   #_(profile! f)
 
-  (def f "test.cljs")
-  (let [out (munge-file f)
-        out-html (file->html f)]
-    
-    (spit "src/cljs/wrapped/test.cljs"
-          (str out "\n\n"
-               (prn-str `(core/render ~out-html)))))
-  
+  (profile-cljs! "test.cljs")
+  (munge-file "test.cljs")
 
 
+  ;;for use with clj code...
+  (defn profile! [f]
+    (let [sw (java.io.StringWriter.)]
+      (binding [*out* sw]
+        (load-file (munge-file! f)))
+      (map read-string (split (str sw) #"\n"))))
 
 
   ;;core match bug?
