@@ -4,6 +4,11 @@
 (profile "count up"
          (doseq [i (range 100000)]))
 
+(profile "count up"
+         (loop [i 0]
+           (when (< i 100000)
+             (recur (inc i)))))
+
 (profile "map inc"
          (doall (map inc (range 100000))))
 
