@@ -25,14 +25,23 @@ window.add_timing = (timing) ->
 
 #profiling fn for JS
 window.profile = (opts, fn) ->
-  start = new Date()
-  fn()
   if typeof opts == "string"
     opts =
       group: opts
+      n: 1
+
+  n = opts.n
+
+  start = new Date()
+  i = 0
+  while i <= n
+    i++
+    fn()
 
   opts["dt"] = new Date() - start
   opts["lang"] = "js"
   opts["src"] = fn.toString()
+    .replace(/^function\s*\(\){\n/, "")
+    .replace(/}$/, "")
   add_timing opts
 

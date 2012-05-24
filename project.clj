@@ -3,17 +3,19 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/core.match "0.2.0-alpha9"]
 
-                 [com.keminglabs/c2 "0.1.1-SNAPSHOT"]
+                 [com.keminglabs/c2 "0.1.1"]
                  [com.keminglabs/vomnibus "0.3.0"]]
 
-  :plugins [[lein-cljsbuild "0.1.9"]]
+  :plugins [[lein-cljsbuild "0.1.10"]]
   
-  :cljsbuild {:builds {:simple {:source-path "src/cljs/microbenchmarks"
+  :cljsbuild {:builds {:simple {:source-path "src/cljs/c2_benchmarks"
                                 :compiler {:output-to "public/simple.js"
                                            :optimizations :simple}}
-                       :advanced {:source-path "src/cljs/microbenchmarks"
+                       :advanced {:source-path "src/cljs/c2_benchmarks"
                                   :compiler {:output-to "public/advanced.js"
-                                             :optimizations :advanced}}
+                                             :optimizations :advanced}
+                                  :externs ["c2-externs.js"]}
+                       
                        :viewer {:source-path "src/cljs/viewer"
                                 :compiler {:output-to "public/viewer.js"
                                              :optimizations :simple}}}}
