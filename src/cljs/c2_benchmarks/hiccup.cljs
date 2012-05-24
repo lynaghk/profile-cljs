@@ -37,8 +37,6 @@
 
 ;;;;;;;;;;;;;;;;;;
 ;;Hiccup compiler
-
-
 (def re-svg-tags #"(svg|g|rect|circle|clipPath|path|line|polygon|polyline|text|textPath)")
 (def re-tag #"([^\s\.#]+)(?:#([^\s\.#]+))?(?:\.([^\s#]+))?")
 (def xmlns {:xhtml "http://www.w3.org/1999/xhtml"
@@ -65,10 +63,10 @@
   (let [[tag attr & children] v
         [_ tag-str id class-str] (re-matches re-tag (name tag))
         [nsp tag] (namespace-tag tag-str)
-        tag-attrs {:id id
-                   :class (when class-str (string/replace class-str #"\." " "))}
-        attr (into {} (filter #(not (nil? (second %)))
-                              (merge-with #(str %1 " " %2) tag-attrs attr)))
+        attrs (assoc attrs
+                :id id
+                :class (str (:class attr) " "
+                            (when class-str (.replace class-str "." " "))))
 
         ;;Explode children seqs in place
         children (mapcat #(if (and (not (vector? %)) (seq? %))
@@ -105,11 +103,7 @@
 (profile {:group "regex" :n 1000} (string/split "abc:def" #":"))
 
 (profile {:group "hiccup" :n 1000}
-         )
-
-
-(profile {:group "hiccup" :n 1000}
-         (canonicalize [:div]))
+         (canonicalize [:div [:span] [:span]]))
 
 ;; (profile {:group "hiccup" :n 1000}
 ;;          (canonicalize [:div {:a 1}]))
