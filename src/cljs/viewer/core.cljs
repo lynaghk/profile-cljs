@@ -1,6 +1,6 @@
 (ns viewer.core
   (:use-macros [c2.util :only [p pp]])
-  (:use [c2.core :only [unify!]]
+  (:use [c2.core :only [unify]]
         [c2.maths :only [median]])
   (:require [c2.dom :as dom]
             [c2.event :as event]))
@@ -29,22 +29,21 @@
   ;;C2 gets tripped up by the code highligher changing the markup, so for now just clear everything on redraws.
   (set! (.-innerHTML $res) "")
 
-  (unify! $res (grouped-timings)
-          (fn [[group timings]]
-            [:div.group
-             [:h3 group]
-             [:table
-              [:tbody
-               (for [[src ts] (group-by :src timings)]
-                 [:tr
-                  
-                  [:td.time
-                   (for [[mode ts] (group-by :mode ts)]
-                     [:span {:class (or mode "js")} (median (map :dt ts))])]
+  (dom/append! $res
+               [:div
+                (for [[group timings] (grouped-timings)]
+                  [:div.group
+                   [:h3 group]
+                   [:table
+                    [:tbody
+                     (for [[src ts] (group-by :src timings)]
+                       [:tr
 
-                  [:td.code [:pre [:code src]]]])]]])
-          
-          :key-fn (fn [[group timings]] group))
+                        [:td.time
+                         (for [[mode ts] (group-by :mode ts)]
+                           [:span {:class (or mode "js")} (median (map :dt ts))])]
+
+                        [:td.code [:pre [:code src]]]])]]])])
 
   (doseq [$el (dom/select-all "code")]
     (js/hljs.highlightBlock $el)))
